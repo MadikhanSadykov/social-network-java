@@ -1,10 +1,10 @@
 package com.madikhan.app.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.madikhan.app.util.converter.BirthdayConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
@@ -12,33 +12,25 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "profile", schema = "social-network")
-public class Profile {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Profile extends AuditableEntity<Long> {
 
     @OneToOne
     private User user;
@@ -95,15 +87,4 @@ public class Profile {
     @ManyToMany(mappedBy = "profilesWhoLiked")
     private Set<Post> likedPosts = new HashSet<>();
 
-    @JsonFormat(pattern = "yyyy-mm-dd HH::mm::ss")
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
-
-    @Column
-    private LocalDateTime updatedDate;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdDate = LocalDateTime.now();
-    }
 }
