@@ -12,12 +12,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
@@ -26,13 +26,11 @@ import java.util.Properties;
 @ComponentScan({ "com.madikhan" })
 public class HibernateConfig {
 
-    @Autowired
-    private Environment env;
+    private final Environment environment;
 
-    private HibernateJpaVendorAdapter vendorAdaptor() {
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setShowSql(true);
-        return vendorAdapter;
+    @Autowired
+    public HibernateConfig(Environment environment) {
+        this.environment = environment;
     }
 
     @Bean
@@ -48,10 +46,10 @@ public class HibernateConfig {
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-        dataSource.setUrl(env.getProperty("jdbc.url"));
-        dataSource.setUsername(env.getProperty("jdbc.user"));
-        dataSource.setPassword(env.getProperty("jdbc.password"));
+        dataSource.setDriverClassName(environment.getProperty("jdbc.driverClassName"));
+        dataSource.setUrl(environment.getProperty("jdbc.url"));
+        dataSource.setUsername(environment.getProperty("jdbc.user"));
+        dataSource.setPassword(environment.getProperty("jdbc.password"));
 
         return dataSource;
     }
@@ -67,9 +65,12 @@ public class HibernateConfig {
     Properties hibernateProperties() {
         return new Properties() {
             {
-                setProperty("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-                setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
+                setProperty("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
+                setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
                 setProperty("hibernate.current_session_context_class", "thread");
+                setProperty("hibernate.show_sql", "true");
+                setProperty("hibernate.format_sql", "true");
+                setProperty("hibernate.use_sql_comments", "true");
             }
         };
     }
@@ -78,10 +79,9 @@ public class HibernateConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-        entityManagerFactoryBean.setJpaVendorAdapter(vendorAdaptor());
         entityManagerFactoryBean.setDataSource(dataSource());
         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-        entityManagerFactoryBean.setPackagesToScan(new String[]{"com.madikhan.app.model"});
+        entityManagerFactoryBean.setPackagesToScan("com.madikhan.app.model");
         entityManagerFactoryBean.setJpaProperties(hibernateProperties());
 
         return entityManagerFactoryBean;
@@ -90,7 +90,7 @@ public class HibernateConfig {
     @Bean
     @Qualifier(value = "entityManager")
     public EntityManager entityManager() {
-        return entityManagerFactory().getObject().createEntityManager();
+        return Objects.requireNonNull(entityManagerFactory().getObject()).createEntityManager();
     }
 
 }

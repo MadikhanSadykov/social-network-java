@@ -1,119 +1,72 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/resources/css/index.css}"/>
-</head>
+<head th:replace="fragments/fragments.html :: html_head"></head>
 
 <body>
 
-<div class="container">
-    <div class="col-md-7">
+<div th:replace="fragments/fragments.html :: navbar">
+</div>
 
-        <div class="social-feed-box">
-            <div class="pull-right social-action dropdown">
-                <button data-toggle="dropdown" class="dropdown-toggle btn-white">
-                    <i class="fa fa-angle-down"></i>
-                </button>
-                <ul class="dropdown-menu m-t-xs">
-                    <li><a href="#">Config</a></li>
-                </ul>
-            </div>
-            <div class="social-avatar">
-                <a href="" class="pull-left">
-                    <img alt="image" src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                </a>
-                <div class="media-body">
-                    <a href="#">
-                        Andrew Williams
-                    </a>
-                    <small class="text-muted">Today 4:21 pm - 12.06.2014</small>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3 align-self-center">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="https://www.pngkey.com/png/full/73-730477_first-name-profile-image-placeholder-png.png" class="img-thumbnail" alt="profileImage">
+                    </div>
+                    <div class="col-md-10 align-self-center">
+                        <h5 class="card-title">@UserName</h5>
+                    </div>
                 </div>
+                <p class="card-text">Location: Paris</p>
             </div>
-            <div class="social-body">
+            <img th:src="@{../resources/img/post-image.jpg}" class="card-img-top" alt="Post Image">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Description: This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little longer.</p>
+                <p class="card-text"><small class="text-muted">Time: 2022-11-28</small></p>
+
                 <p>
-                    Many desktop publishing packages and web page editors now use Lorem Ipsum as their
-                    default model text, and a search for 'lorem ipsum' will uncover many web sites still
-                    in their infancy. Packages and web page editors now use Lorem Ipsum as their
-                    default model text.
+                    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        Comment
+                    </a>
                 </p>
-                <p>
-                    Lorem Ipsum as their
-                    default model text, and a search for 'lorem ipsum' will uncover many web sites still
-                    in their infancy. Packages and web page editors now use Lorem Ipsum as their
-                    default model text.
-                </p>
-                <img src="https://via.placeholder.com/650x280/FFB6C1/000000" class="img-responsive">
-                <div class="btn-group">
-                    <button class="btn btn-white btn-xs"><i class="fa fa-thumbs-up"></i> Like this!</button>
-                    <button class="btn btn-white btn-xs"><i class="fa fa-comments"></i> Comment</button>
-                    <button class="btn btn-white btn-xs"><i class="fa fa-share"></i> Share</button>
-                </div>
-            </div>
-            <div class="social-footer">
-                <div class="social-comment">
-                    <a href="" class="pull-left">
-                        <img alt="image" src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                    </a>
-                    <div class="media-body">
-                        <a href="#">
-                            Andrew Williams
-                        </a>
-                        Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
-                        <br>
-                        <a href="#" class="small"><i class="fa fa-thumbs-up"></i> 26 Like this!</a> -
-                        <small class="text-muted">12.06.2014</small>
-                    </div>
-                </div>
-
-                <div class="social-comment">
-                    <a href="" class="pull-left">
-                        <img alt="image" src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                    </a>
-                    <div class="media-body">
-                        <a href="#">
-                            Andrew Williams
-                        </a>
-                        Making this the first true generator on the Internet. It uses a dictionary of.
-                        <br>
-                        <a href="#" class="small"><i class="fa fa-thumbs-up"></i> 11 Like this!</a> -
-                        <small class="text-muted">10.07.2014</small>
-                    </div>
-                </div>
-
-                <div class="social-comment">
-                    <a href="" class="pull-left">
-                        <img alt="image" src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                    </a>
-                    <div class="media-body">
-                        <a href="#">
-                            Andrew Williams
-                        </a>
-                        Making this the first true generator on the Internet. It uses a dictionary of.
-                        <br>
-                        <a href="#" class="small"><i class="fa fa-thumbs-up"></i> 11 Like this!</a> -
-                        <small class="text-muted">10.07.2014</small>
-                    </div>
-                </div>
-
-                <div class="social-comment">
-                    <a href="" class="pull-left">
-                        <img alt="image" src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                    </a>
-                    <div class="media-body">
-                        <textarea class="form-control" placeholder="Write comment..."></textarea>
+                <div class="collapse" id="collapseExample">
+                    <form method="POST" action="/comments/add">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <input class="form-control" placeholder="Leave a comment here" name="comment" style="height: 50px" />
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-success btn-lg" style="height: 50px" >Send</button>
+                            </div>
+                        </div>
+                    </form>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-10 card card-body">
+                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                        </div>
+                        <div class="col-md-1">
+                            <img src="https://www.pngkey.com/png/full/73-730477_first-name-profile-image-placeholder-png.png" class="img-thumbnail" alt="profileImage">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
+
+
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+</script>
+<script type="text/javascript" th:src="@{../resources/js/changeLanguage.js}"></script>
 
 </body>
 

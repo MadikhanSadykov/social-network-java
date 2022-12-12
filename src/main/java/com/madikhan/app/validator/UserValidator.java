@@ -2,7 +2,6 @@ package com.madikhan.app.validator;
 
 import com.madikhan.app.model.User;
 import com.madikhan.app.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -13,8 +12,11 @@ import org.springframework.validation.Validator;
 @Component
 public class UserValidator implements Validator {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserValidator(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -27,12 +29,12 @@ public class UserValidator implements Validator {
         User user = (User) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "required");
-        if (user.getEmail().length() < 6 || user.getEmail().length() > 32) {
-            errors.rejectValue("email", "size.login.email", "Email must be between 8 and 64 characters");
+        if (user.getEmail().length() < 6 || user.getEmail().length() > 64) {
+            errors.rejectValue("email", "size.login.email", "Email must be between 6 and 64 characters");
         }
 
         if (userService.listByUsername(user.getEmail()).isPresent()) {
-            errors.rejectValue("email", "duplicate.login.email", "This email is already in usel");
+            errors.rejectValue("email", "duplicate.login.email", "This email is already in use");
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "required");

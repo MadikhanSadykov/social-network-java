@@ -2,7 +2,6 @@ package com.madikhan.app.service.impl;
 
 import com.madikhan.app.dao.impl.ProfileDAOImpl;
 import com.madikhan.app.model.Profile;
-import com.madikhan.app.model.User;
 import com.madikhan.app.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +31,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<Profile> listAll() {
+    public Optional<List<Profile>> listAll() {
         return profileDAO.findAll();
     }
 
@@ -44,5 +43,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile listByUserId(Long userId) {
         return profileDAO.findByUserId(userId).orElseGet(Profile::new);
+    }
+
+    @Override
+    public Optional<Profile> listByUsername(String username) {
+        return profileDAO.findByUsername(username);
     }
 }

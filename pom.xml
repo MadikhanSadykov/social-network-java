@@ -4,7 +4,7 @@
 
   <groupId>com.madikhan</groupId>
   <artifactId>spring-social-network-mvc</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
 
   <name>spring-social-network-mvc</name>
@@ -18,10 +18,17 @@
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
     <mysql-connector-java.version>8.0.30</mysql-connector-java.version>
     <hibernate-core.version>6.1.4.Final</hibernate-core.version>
-    <spring.version></spring.version>
   </properties>
 
   <dependencies>
+
+    <!-- https://mvnrepository.com/artifact/p6spy/p6spy -->
+    <dependency>
+      <groupId>p6spy</groupId>
+      <artifactId>p6spy</artifactId>
+      <version>3.9.1</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.slf4j</groupId>

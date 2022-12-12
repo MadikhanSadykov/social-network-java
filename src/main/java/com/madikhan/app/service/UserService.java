@@ -10,10 +10,10 @@ import java.util.Optional;
 public interface UserService {
 
     Optional<User> listByUsername(String username);
-    void save(User user);
+    User save(User user);
     void remove(Long id);
     void update(User user);
-    List<User> listAll();
+    Optional<List<User>> listAll();
     User listById(Long id);
 
 }

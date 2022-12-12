@@ -1,41 +1,42 @@
 package com.madikhan.app.dao.impl;
 
 import com.madikhan.app.dao.DAO;
-import com.madikhan.app.model.Profile;
 import com.madikhan.app.model.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Component
 public class UserDAOImpl implements DAO<Long, User> {
 
-    private Class<Profile> entityClass;
+    private EntityManager entityManager;
 
     @Autowired
-    private EntityManager entityManager;
+    public UserDAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public Optional<User> findUserByUsername(String email) {
         Optional<User> user = Optional.empty();
         EntityTransaction transaction = null;
+
+        String HQL = "from User where email =:email ";
+        Query query = entityManager.createQuery(HQL);
+        query.setParameter("email", email);
+        query.setHint("org.hibernate.comment", String.format("email = %s", email));
+
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            user = Optional
-                    .ofNullable(entityManager.createQuery("From User where email='" + email + "'", User.class)
-                            .getSingleResult());
+            user = Optional.ofNullable((User) query.getSingleResult());
             entityManager.flush();
             transaction.commit();
         } catch (NoResultException ex) {
@@ -44,24 +45,19 @@ public class UserDAOImpl implements DAO<Long, User> {
             }
             ex.printStackTrace();
         }
+
         return user;
     }
 
     @Override
     public User create(User user) {
-        EntityTransaction transaction = null;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            entityManager.persist(user);
-            entityManager.flush();
-            transaction.commit();
-        } catch (Exception ex) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            ex.printStackTrace();
-        }
+        EntityTransaction transaction;
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+        entityManager.persist(user);
+        entityManager.flush();
+        transaction.commit();
+
         return user;
     }
 
@@ -81,7 +77,7 @@ public class UserDAOImpl implements DAO<Long, User> {
     }
 
     @Override
-    public List<User> findAll() {
-        return null;
+    public Optional<List<User>> findAll() {
+        return Optional.empty();
     }
 }

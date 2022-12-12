@@ -15,6 +15,6 @@ public interface DAO<K extends Serializable, E> {
 
     Optional<E> findById(K id);
 
-    List<E> findAll();
+    Optional<List<E>> findAll();
 
 }

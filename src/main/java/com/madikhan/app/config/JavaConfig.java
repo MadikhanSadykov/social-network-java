@@ -8,15 +8,19 @@ import com.madikhan.app.model.User;
 import com.madikhan.app.service.ProfileService;
 import com.madikhan.app.service.UserService;
 import com.madikhan.app.service.impl.ProfileServiceImpl;
+import com.madikhan.app.service.impl.UserDetailsServiceImpl;
 import com.madikhan.app.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ResourceBundle;
+
+import javax.persistence.EntityManager;
+
 
 @Configuration
 @ComponentScan(basePackages = { "com.madikhan" } )
@@ -34,8 +38,8 @@ public class JavaConfig {
     }
 
     @Bean
-    public ProfileDAOImpl profileDAO() {
-        return new ProfileDAOImpl();
+    public ProfileDAOImpl profileDAO(EntityManager entityManager) {
+        return new ProfileDAOImpl(entityManager);
     }
 
     @Bean
@@ -49,18 +53,23 @@ public class JavaConfig {
     }
 
     @Bean
-    public UserDAOImpl userDAO() {
-        return new UserDAOImpl();
+    public UserDAOImpl userDAO(EntityManager entityManager) {
+        return new UserDAOImpl(entityManager);
     }
 
     @Bean
-    public RoleDAOImpl roleDAO() {
-        return new RoleDAOImpl();
+    public RoleDAOImpl roleDAO(EntityManager entityManager) {
+        return new RoleDAOImpl(entityManager);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserDAOImpl userDAO) {
+        return new UserDetailsServiceImpl(userDAO);
     }
 
 }

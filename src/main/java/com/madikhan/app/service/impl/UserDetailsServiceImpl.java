@@ -17,8 +17,12 @@ import java.util.Optional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private final UserDAOImpl userDAO;
+
     @Autowired
-    private UserDAOImpl userDAO;
+    public UserDetailsServiceImpl(UserDAOImpl userDAO) {
+        this.userDAO = userDAO;
+    }
 
     @Override
     @Transactional(readOnly = true)

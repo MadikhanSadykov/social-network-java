@@ -30,8 +30,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@EqualsAndHashCode(exclude={"profile","roles"})
-@ToString(exclude = {"profile","roles"})
+@EqualsAndHashCode(exclude= {"roles"})
+@ToString(exclude = {"roles"})
 @Table(name = "user")
 @Component
 public class User {
@@ -56,8 +56,5 @@ public class User {
             inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
     )
     private Set<Role> roles = new HashSet<>();
-
-//    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private Profile profile;
 
 }

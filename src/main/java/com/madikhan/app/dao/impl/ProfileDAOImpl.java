@@ -2,9 +2,7 @@ package com.madikhan.app.dao.impl;
 
 import com.madikhan.app.dao.DAO;
 import com.madikhan.app.model.Profile;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,16 +15,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
 @Component
 public class ProfileDAOImpl implements DAO<Long, Profile> {
 
-    private Class<Profile> entityClass;
+    private EntityManager entityManager;
 
     @Autowired
-    private EntityManager entityManager;
+    public ProfileDAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public Optional<Profile> findByUserId(Long id) {
         String query = "SELECT p FROM Profile p WHERE p.userId = :id";
@@ -41,40 +39,41 @@ public class ProfileDAOImpl implements DAO<Long, Profile> {
         return profile;
     }
 
-    @Override
-    public Profile create(Profile profile) {
-        EntityTransaction transaction = null;
+    public Optional<Profile> findByUsername(String username) {
+        String query = "SELECT p FROM Profile p WHERE p.username = :username";
+        TypedQuery<Profile> typedQuery = entityManager.createQuery(query, Profile.class);
+        typedQuery.setParameter("username", username);
+        Optional<Profile> profile = Optional.empty();
         try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            entityManager.persist(profile);
-            entityManager.flush();
-            transaction.commit();
-        } catch (Exception ex) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            ex.printStackTrace();
+            profile = Optional.ofNullable(typedQuery.getSingleResult());
+        } catch (NoResultException ex) {
+            log.info(ex.getMessage());
         }
         return profile;
     }
 
     @Override
+    public Profile create(Profile profile) {
+        EntityTransaction transaction;
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+        entityManager.persist(profile);
+        entityManager.flush();
+        transaction.commit();
+
+        return profile;
+    }
+
+    @Override
     public void delete(Long id) {
-        EntityTransaction transaction = null;
+        EntityTransaction transaction;
         Profile profile;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            profile = entityManager.find(Profile.class, id);
-            entityManager.remove(profile);
-            transaction.commit();
-        } catch (Exception ex) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            ex.printStackTrace();
-        }
+        transaction = entityManager.getTransaction();
+        transaction.begin();
+        profile = entityManager.find(Profile.class, id);
+        entityManager.remove(profile);
+        transaction.commit();
+
     }
 
     @Override
@@ -108,12 +107,12 @@ public class ProfileDAOImpl implements DAO<Long, Profile> {
     }
 
     @Override
-    public List<Profile> findAll() {
+    public Optional<List<Profile>> findAll() {
         String query = "SELECT p FROM Profile p WHERE p.id IS NOT NULL";
         TypedQuery<Profile> typedQuery = entityManager.createQuery(query, Profile.class);
-        List<Profile> profiles = null;
+        Optional<List<Profile>> profiles = Optional.empty();
         try {
-            profiles = typedQuery.getResultList();
+            profiles = Optional.ofNullable(typedQuery.getResultList());
         } catch (NoResultException ex) {
             ex.printStackTrace();
         }

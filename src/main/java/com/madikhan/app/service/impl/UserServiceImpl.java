@@ -34,12 +34,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Set<Role> roles = new HashSet<>();
         roles.add(roleDAO.findById(USER_ROLE_ID).orElseGet(Role::new));
         user.setRoles(roles);
         userDAO.create(user);
+
+        return user;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> listAll() {
+    public Optional<List<User>> listAll() {
         return null;
     }
 
