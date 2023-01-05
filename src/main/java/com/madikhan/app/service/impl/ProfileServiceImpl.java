@@ -12,8 +12,12 @@ import java.util.Optional;
 @Component
 public class ProfileServiceImpl implements ProfileService {
 
+    private final ProfileDAOImpl profileDAO;
+
     @Autowired
-    private ProfileDAOImpl profileDAO;
+    public ProfileServiceImpl(ProfileDAOImpl profileDAO) {
+        this.profileDAO = profileDAO;
+    }
 
     @Override
     public void save(Profile profile) {
@@ -26,8 +30,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void update(Profile profile) {
-        profileDAO.update(profile);
+    public Profile update(Profile profile) {
+        return profileDAO.update(profile);
     }
 
     @Override
@@ -48,5 +52,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Optional<Profile> listByUsername(String username) {
         return profileDAO.findByUsername(username);
+    }
+
+    @Override
+    public Profile saveAvatarById(Long id, String imageUrl) {
+        return profileDAO.updateAvatarByProfileId(id, imageUrl);
     }
 }

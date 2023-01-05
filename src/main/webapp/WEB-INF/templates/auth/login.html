@@ -5,11 +5,9 @@
 <body>
 
 
-
-
 <div class="d-flex justify-content-center align-items-center container">
   <div class="row">
-    <form method="POST" action="/process_login">
+    <form method="POST" action="/process_login" class="form-group">
       <div class="mb-3">
         <label for="username" class="form-label">Email</label>
         <input type="email" name="username" class="form-control" id="username">
@@ -21,6 +19,7 @@
       <div th:if="${param.error}" style="color: red">
         Wrong username or password
       </div>
+      <a th:href="@{/auth/register}">Create account</a>
       <button type="submit" class="btn btn-primary">Sign In</button>
     </form>
   </div>

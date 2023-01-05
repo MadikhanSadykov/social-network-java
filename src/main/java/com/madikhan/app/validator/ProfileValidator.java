@@ -1,6 +1,6 @@
 package com.madikhan.app.validator;
 
-import com.madikhan.app.model.Profile;
+import com.madikhan.app.dto.ProfileDTO;
 import com.madikhan.app.service.ProfileService;
 
 import org.springframework.stereotype.Component;
@@ -19,13 +19,13 @@ public class ProfileValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Profile.class.equals(clazz);
+        return ProfileDTO.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        Profile profile = (Profile) target;
+        ProfileDTO profile = (ProfileDTO) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "required");
         if (profile.getUsername().length() < 6 || profile.getUsername().length() > 32) {

@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,11 +31,13 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@EqualsAndHashCode(exclude= {"roles"})
-@ToString(exclude = {"roles"})
+@EqualsAndHashCode(exclude= {"roles", "profile"})
+@ToString(exclude = {"roles", "profile"})
 @Table(name = "user")
 @Component
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 8875668993303528282L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +48,9 @@ public class User {
 
     @Column(length = 3000, nullable = false)
     private String password;
+
+    @OneToOne(mappedBy = "user")
+    private Profile profile;
 
     @Transient
     private String confirmPassword;

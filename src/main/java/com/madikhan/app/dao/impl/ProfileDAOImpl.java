@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class ProfileDAOImpl implements DAO<Long, Profile> {
     }
 
     public Optional<Profile> findByUserId(Long id) {
-        String query = "SELECT p FROM Profile p WHERE p.userId = :id";
+        String query = "SELECT p FROM Profile p WHERE p.user.id = :id";
         TypedQuery<Profile> typedQuery = entityManager.createQuery(query, Profile.class);
         typedQuery.setParameter("id", id);
         Optional<Profile> profile = Optional.empty();
@@ -50,6 +51,25 @@ public class ProfileDAOImpl implements DAO<Long, Profile> {
             log.info(ex.getMessage());
         }
         return profile;
+    }
+
+    public Profile updateAvatarByProfileId(Long id, String imageUrl) {
+        EntityTransaction transaction;
+        transaction = entityManager.getTransaction();
+        Optional<Profile> optionalUpdatedProfile;
+
+        String queryString = "update Profile set imageUrl=:imageUrl where id=:id";
+        Query query = entityManager.createQuery(queryString);
+        query.setParameter("imageUrl", imageUrl);
+        query.setParameter("id", id);
+
+        transaction.begin();
+        query.executeUpdate();
+        entityManager.flush();
+        transaction.commit();
+
+        optionalUpdatedProfile = findById(id);
+        return optionalUpdatedProfile.orElse(new Profile());
     }
 
     @Override
@@ -77,8 +97,9 @@ public class ProfileDAOImpl implements DAO<Long, Profile> {
     }
 
     @Override
-    public void update(Profile profile) {
+    public Profile update(Profile profile) {
         EntityTransaction transaction = null;
+        Optional<Profile> optionalPersistedProfile;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
@@ -90,6 +111,9 @@ public class ProfileDAOImpl implements DAO<Long, Profile> {
             }
             ex.printStackTrace();
         }
+
+        optionalPersistedProfile = findById(profile.getId());
+        return optionalPersistedProfile.orElse(profile);
     }
 
     @Override

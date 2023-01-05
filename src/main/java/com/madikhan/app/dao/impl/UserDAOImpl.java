@@ -1,6 +1,7 @@
 package com.madikhan.app.dao.impl;
 
 import com.madikhan.app.dao.DAO;
+import com.madikhan.app.model.Profile;
 import com.madikhan.app.model.User;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +68,9 @@ public class UserDAOImpl implements DAO<Long, User> {
     }
 
     @Override
-    public void update(User entity) {
+    public Profile update(User entity) {
 
+        return null;
     }
 
     @Override

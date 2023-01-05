@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +27,9 @@ import java.util.Set;
 @ToString(exclude = {"users"})
 @Table(name = "role")
 @Component
-public class Role {
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 65641956991186234L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

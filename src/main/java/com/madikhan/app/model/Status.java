@@ -1,10 +1,12 @@
 package com.madikhan.app.model;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -25,13 +27,21 @@ import java.io.Serializable;
 @Component
 public class Status implements Serializable {
 
+    private static final long serialVersionUID = 4127797720626193642L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Id
-    private Long localId;
+    @Embedded
+    private LocalId localId;
 
     @Column
     private String name;
+
+    @OneToOne(mappedBy = "status")
+    private Comment comment;
+
+    @OneToOne(mappedBy = "status")
+    private Post post;
 }

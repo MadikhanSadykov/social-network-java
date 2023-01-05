@@ -12,17 +12,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.OneToOne;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,7 +36,9 @@ import java.util.Set;
 @Entity
 @Table(name = "post")
 @Component
-public class Post {
+public class  Post implements Serializable {
+
+    private static final long serialVersionUID = 341154168179551535L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,36 +57,30 @@ public class Post {
     private Profile profile;
 
     @OneToOne
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
     private Status status;
 
-    @Column(nullable = false)
+    @Column(name = "image_url")
     private String imageUrl;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinTable(
             name = "like",
             joinColumns = { @JoinColumn(name = "post_id") },
             inverseJoinColumns = { @JoinColumn(name = "profile_id") }
     )
-    private Set<Profile> profilesWhoLiked = new HashSet<>();
-
-    @OneToMany
-    private Set<PostImage> postImages = new HashSet<>();
+    private Set<Profile> profilesLikedPost = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @JsonFormat(pattern = "yyyy-mm-dd HH::mm::ss")
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
+    @OneToOne(mappedBy = "post")
+    private PostBannedList postBannedList;
 
     @JsonFormat(pattern = "yyyy-mm-dd HH::mm::ss")
+    @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdDate = LocalDateTime.now();
-    }
 
     @PreUpdate
     protected void onUpdate() {
