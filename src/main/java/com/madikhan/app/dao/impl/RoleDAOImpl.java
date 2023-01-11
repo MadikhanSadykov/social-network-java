@@ -1,6 +1,7 @@
 package com.madikhan.app.dao.impl;
 
 import com.madikhan.app.dao.DAO;
+import com.madikhan.app.model.Profile;
 import com.madikhan.app.model.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,8 +39,9 @@ public class RoleDAOImpl implements DAO<Long, Role> {
     }
 
     @Override
-    public void update(Role role) {
+    public Profile update(Role role) {
 
+        return null;
     }
 
     @Override

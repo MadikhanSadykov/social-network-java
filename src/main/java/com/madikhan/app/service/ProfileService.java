@@ -11,10 +11,10 @@ public interface ProfileService {
 
     void save(Profile profile);
     void remove(Long id);
-    void update(Profile profile);
+    Profile update(Profile profile);
     Optional<List<Profile>> listAll();
     Profile listById(Long id);
     Profile listByUserId(Long userId);
-
+    Profile saveAvatarById(Long id, String imageUrl);
     Optional<Profile> listByUsername(String username);
 }

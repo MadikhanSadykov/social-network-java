@@ -10,7 +10,7 @@
 <div th:fragment="navbar">
   <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">BeSocial</a>
+      <a class="navbar-brand" href="/">BeSocial</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -19,17 +19,25 @@
           <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
           <a class="nav-link" th:href="@{/profiles/{username}(username=${session.profile.username})}">Profile</a>
           <a class="nav-link" href="#">Friends</a>
-          <a class="nav-link" th:href="@{/logout}">Sign Out -<span th:text="#{app.logout}"></span></a>
+          <a class="nav-link" th:href="@{/logout}"><span th:text="#{app.logout}"></span></a>
           <select id="locales">
             <option th:text="#{app.lang}"></option>
             <option value="en" th:text="#{app.lang.english}"></option>
             <option value="ru" th:text="#{app.lang.russian}"></option>
           </select>
+
+          <a class="navbar-brand me-auto" th:href="@{/profiles/{username}(username=${session.profile.username})}">
+            <img th:src="${session.profile.imageUrl != null} ? ${session.baseURL + session.profile.imageUrl} : '/resources/img/avatars/default-ava-png-profile.png'"
+                 alt="Profile Avatar" class="d-inline-block align-top rounded-circle mr-sm-2" style="width: 30px; height: 30px">
+          </a>
+          <a class="nav-link me-auto" th:href="@{/profiles/{username}(username=${session.profile.username})}"><span th:text="${session.profile.username}"></span></a>
         </div>
       </div>
     </div>
   </nav>
 </div>
+
+
 
 
 </body>

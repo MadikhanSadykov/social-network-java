@@ -1,5 +1,9 @@
 package com.madikhan.app.controller;
 
+import com.madikhan.app.dto.ProfileDTO;
+import com.madikhan.app.dto.UserDTO;
+import com.madikhan.app.dto.mapper.ProfileDTOMapper;
+import com.madikhan.app.dto.mapper.UserDTOMapper;
 import com.madikhan.app.model.Profile;
 import com.madikhan.app.model.User;
 import com.madikhan.app.service.ProfileService;
@@ -24,32 +28,40 @@ public class AuthController {
     private final ProfileService profileService;
     private final UserValidator userValidator;
     private final ProfileValidator profileValidator;
+    private final UserDTOMapper userDTOMapper;
+    private final ProfileDTOMapper profileDTOMapper;
 
     @Autowired
-    public AuthController(UserService userService, ProfileService profileService, UserValidator userValidator, ProfileValidator profileValidator) {
+    public AuthController(UserService userService, ProfileService profileService, UserValidator userValidator,
+                          ProfileValidator profileValidator, UserDTOMapper userDTOMapper, ProfileDTOMapper profileDTOMapper) {
         this.userService = userService;
         this.profileService = profileService;
         this.userValidator = userValidator;
         this.profileValidator = profileValidator;
+        this.userDTOMapper = userDTOMapper;
+        this.profileDTOMapper = profileDTOMapper;
     }
 
     @GetMapping("/register")
-    public String registerPage(@ModelAttribute("user") User user, @ModelAttribute("profile") Profile profile) {
+    public String registerPage(@ModelAttribute("user") User user, @ModelAttribute("profile") ProfileDTO profileDTO) {
         return "auth/register";
     }
 
 
     @PostMapping("/register")
-    public String performRegister(@ModelAttribute("user") @Valid User user, BindingResult userBindingResult,
-                                  @ModelAttribute("profile") @Valid Profile profile, BindingResult profileBindingResult) {
-        profileValidator.validate(profile, profileBindingResult);
-        userValidator.validate(user, userBindingResult);
+    public String performRegister(@ModelAttribute("user") @Valid UserDTO userDTO, BindingResult userBindingResult,
+                                  @ModelAttribute("profile") @Valid ProfileDTO profileDTO, BindingResult profileBindingResult) {
+        profileValidator.validate(profileDTO, profileBindingResult);
+        userValidator.validate(userDTO, userBindingResult);
         if (profileBindingResult.hasErrors() || userBindingResult.hasErrors()){
             return "auth/register";
         }
 
+        User user = userDTOMapper.dtoToUser(userDTO);
         User persistedUser = userService.save(user);
-        profile.setUserId(persistedUser.getId());
+
+        Profile profile = profileDTOMapper.dtoToProfile(profileDTO);
+        profile.setUser(persistedUser);
         profileService.save(profile);
 
         return "redirect:/auth/login";

@@ -19,9 +19,12 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,11 +35,14 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"user", "profileBannedList"})
 @Builder
 @Entity
 @Table(name = "profile")
 @Component
-public class Profile {
+public class Profile implements Serializable {
+
+    private static final long serialVersionUID = 7981870027819968702L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,16 +60,21 @@ public class Profile {
     @Column(columnDefinition = "text")
     private String bio;
 
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     @Column(name = "birth_date")
     private Date birthDate;
 
-    @Column(name = "phone_number", length = 32)
+    @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    @ManyToMany(cascade = { CascadeType.ALL } )
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "friendship",
             joinColumns = { @JoinColumn(name = "profile_id") },
@@ -71,7 +82,7 @@ public class Profile {
     )
     private Set<Profile> friends = new HashSet<>();
 
-    @ManyToMany(cascade = { CascadeType.ALL } )
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "followership",
             joinColumns = { @JoinColumn(name = "following_id") },
@@ -79,7 +90,7 @@ public class Profile {
     )
     private Set<Profile> followers = new HashSet<>();
 
-    @ManyToMany(cascade = { CascadeType.ALL } )
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "followership",
             joinColumns = { @JoinColumn(name = "follower_id") },
@@ -87,20 +98,20 @@ public class Profile {
     )
     private Set<Profile> followings = new HashSet<>();
 
-    @ManyToMany
-    private Set<Profile> profileBlackList = new HashSet<>();
-
     @Column(name = "image_url")
     private String imageUrl;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "profile", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile", orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "profilesWhoLiked")
+    @ManyToMany(mappedBy = "profilesLikedPost", fetch = FetchType.LAZY)
     private Set<Post> likedPosts = new HashSet<>();
 
+    @OneToOne(mappedBy = "profile")
+    private ProfileBannedList profileBannedList;
+
     @JsonFormat(pattern = "yyyy-mm-dd HH::mm::ss")
-    @Column(name = "created_date", updatable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
     @JsonFormat(pattern = "yyyy-mm-dd HH::mm::ss")
@@ -116,5 +127,7 @@ public class Profile {
     protected void onUpdate() {
         this.updatedDate = LocalDateTime.now();
     }
+
+
 
 }

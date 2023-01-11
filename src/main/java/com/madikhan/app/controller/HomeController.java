@@ -10,6 +10,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -24,7 +25,7 @@ public class HomeController {
     }
 
     @GetMapping
-    public String index(HttpSession session) {
+    public String index(HttpServletRequest request) {
         AccountDetails accountDetails = (AccountDetails) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         Long userId = accountDetails.getUser().getId();
@@ -34,7 +35,8 @@ public class HomeController {
             return "redirect:/profiles/new";
         }
 
-        session.setAttribute("profile", profile);
+        request.getSession().setAttribute("profile", profile);
+        request.getSession().setAttribute("baseURL", request.getRequestURL());
 
         return "index";
     }

@@ -1,6 +1,6 @@
 package com.madikhan.app.validator;
 
-import com.madikhan.app.model.User;
+import com.madikhan.app.dto.UserDTO;
 import com.madikhan.app.service.UserService;
 
 import org.springframework.stereotype.Component;
@@ -20,13 +20,13 @@ public class UserValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return User.class.equals(clazz);
+        return UserDTO.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        User user = (User) target;
+        UserDTO user = (UserDTO) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "required");
         if (user.getEmail().length() < 6 || user.getEmail().length() > 64) {
